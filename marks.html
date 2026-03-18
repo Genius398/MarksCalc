@@ -1,277 +1,455 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Board Marks</title>
 
-<title>Board Marks</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#f4f6fb;
-text-align:center;
-padding:40px;
-}
-
-.container{
-background:white;
-width:760px;
-margin:auto;
-padding:25px;
-border-radius:10px;
-box-shadow:0 0 12px rgba(0,0,0,0.15);
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #ddd;
-}
-
-input{
-width:60px;
-padding:6px;
-text-align:center;
-}
-
-button{
-margin-top:20px;
-padding:12px 20px;
-font-size:16px;
-background:#4CAF50;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-button:hover{
-background:#3e8e41;
-}
-
-.result{
-margin-top:25px;
-font-size:16px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>Board Percentage</h1>
-<p>Enter expected theory marks (out of 80). Internal 20 marks will automatically be added.</p>
-
-<table>
-
-<tr>
-<th>Subject</th>
-<th>Min</th>
-<th>Max</th>
-<th>Most Likely</th>
-<th>Mild Range</th>
-<th>Extremes</th>
-</tr>
-
-<tr>
-<td>Maths</td>
-<td><input id="mathMin"></td>
-<td><input id="mathMax"></td>
-<td id="mathLikely">-</td>
-<td id="mathMild">-</td>
-<td id="mathExtreme">-</td>
-</tr>
-
-<tr>
-<td>English</td>
-<td><input id="engMin"></td>
-<td><input id="engMax"></td>
-<td id="engLikely">-</td>
-<td id="engMild">-</td>
-<td id="engExtreme">-</td>
-</tr>
-
-<tr>
-<td>Science</td>
-<td><input id="sciMin"></td>
-<td><input id="sciMax"></td>
-<td id="sciLikely">-</td>
-<td id="sciMild">-</td>
-<td id="sciExtreme">-</td>
-</tr>
-
-<tr>
-<td>Social Science</td>
-<td><input id="sstMin"></td>
-<td><input id="sstMax"></td>
-<td id="sstLikely">-</td>
-<td id="sstMild">-</td>
-<td id="sstExtreme">-</td>
-</tr>
-
-<tr>
-<td>French</td>
-<td><input id="freMin"></td>
-<td><input id="freMax"></td>
-<td id="freLikely">-</td>
-<td id="freMild">-</td>
-<td id="freExtreme">-</td>
-</tr>
-
-</table>
-
-<button onclick="runSimulation()">Run Simulation</button>
-
-<div class="result" id="overall"></div>
-
-</div>
-
-<script>
-function randInt(min,max){
-  return Math.floor(Math.random()*(max-min+1))+min
-}
-
-function percentile(arr,p){
-  let sorted=[...arr].sort((a,b)=>a-b)
-  return sorted[Math.floor(p*sorted.length)]
-}
-
-const inputIds = [
-  "mathMin","mathMax",
-  "engMin","engMax",
-  "sciMin","sciMax",
-  "sstMin","sstMax",
-  "freMin","freMax"
-]
-
-function saveInputs(){
-  inputIds.forEach(id=>{
-    localStorage.setItem(id, document.getElementById(id).value)
-  })
-}
-
-function loadInputs(){
-  inputIds.forEach(id=>{
-    const savedValue = localStorage.getItem(id)
-    if(savedValue !== null){
-      document.getElementById(id).value = savedValue
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      text-align: center;
+      padding: 40px;
+      margin: 0;
     }
-  })
-}
 
-function setupAutosave(){
-  inputIds.forEach(id=>{
-    document.getElementById(id).addEventListener("input", saveInputs)
-  })
-}
+    .container {
+      background: white;
+      width: 950px;
+      max-width: 95%;
+      margin: auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+    }
 
-function clearSavedValues(){
-  inputIds.forEach(id=>{
-    localStorage.removeItem(id)
-    document.getElementById(id).value = ""
-  })
+    h1 {
+      margin-top: 0;
+    }
 
-  document.getElementById("mathLikely").innerHTML = "-"
-  document.getElementById("mathMild").innerHTML = "-"
-  document.getElementById("mathExtreme").innerHTML = "-"
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
 
-  document.getElementById("engLikely").innerHTML = "-"
-  document.getElementById("engMild").innerHTML = "-"
-  document.getElementById("engExtreme").innerHTML = "-"
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
 
-  document.getElementById("sciLikely").innerHTML = "-"
-  document.getElementById("sciMild").innerHTML = "-"
-  document.getElementById("sciExtreme").innerHTML = "-"
+    input {
+      width: 75px;
+      padding: 6px;
+      text-align: center;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
 
-  document.getElementById("sstLikely").innerHTML = "-"
-  document.getElementById("sstMild").innerHTML = "-"
-  document.getElementById("sstExtreme").innerHTML = "-"
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
 
-  document.getElementById("freLikely").innerHTML = "-"
-  document.getElementById("freMild").innerHTML = "-"
-  document.getElementById("freExtreme").innerHTML = "-"
+    button:hover {
+      background: #3e8e41;
+    }
 
-  document.getElementById("overall").innerHTML = ""
-}
+    .secondary-btn {
+      background: #e74c3c;
+    }
 
-function runSimulation(){
-  let simulations = 10000
+    .secondary-btn:hover {
+      background: #c0392b;
+    }
 
-  let subjects = [
-    ["math", Number(mathMin.value), Number(mathMax.value)],
-    ["eng", Number(engMin.value), Number(engMax.value)],
-    ["sci", Number(sciMin.value), Number(sciMax.value)],
-    ["sst", Number(sstMin.value), Number(sstMax.value)],
-    ["fre", Number(freMin.value), Number(freMax.value)]
-  ]
+    .result {
+      margin-top: 25px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
 
-  let subjectData = {
-    math: [],
-    eng: [],
-    sci: [],
-    sst: [],
-    fre: []
-  }
+    .note {
+      margin-top: 10px;
+      color: #555;
+      font-size: 14px;
+    }
 
-  let totalPercentages = []
+    .error {
+      color: #c0392b;
+      margin-top: 15px;
+      font-weight: bold;
+      min-height: 24px;
+    }
 
-  for(let i=0;i<simulations;i++){
-    let total = 0
+    .button-row {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Percentage Calculator</h1>
+    <p>Enter expected theory marks (out of 80). Internal 20 marks will automatically be added.</p>
+    <p class="note">
+      Confidence Rank: <b>1 = strongest / most favorable</b>, <b>10 = weakest / least favorable</b>
+    </p>
+    <p class="note">
+      Use <b>5 unique ranks</b> between 1 and 10.
+    </p>
 
-    subjects.forEach(s=>{
-      let mark = randInt(s[1], s[2])
-      subjectData[s[0]].push(mark)
-      total += mark + 20
-    })
+    <table>
+      <tr>
+        <th>Subject</th>
+        <th>Min</th>
+        <th>Max</th>
+        <th>Confidence Rank</th>
+        <th>Most Likely</th>
+        <th>Mild Range</th>
+        <th>Simulated Extremes</th>
+      </tr>
 
-    let percent = (total/500)*100
-    totalPercentages.push(percent)
-  }
+      <tr>
+        <td>Mathematics</td>
+        <td><input id="mathMin" type="number" min="0" max="80" /></td>
+        <td><input id="mathMax" type="number" min="0" max="80" /></td>
+        <td><input id="mathRank" type="number" min="1" max="10" /></td>
+        <td id="mathLikely">-</td>
+        <td id="mathMild">-</td>
+        <td id="mathExtreme">-</td>
+      </tr>
 
-  subjects.forEach(s=>{
-    let arr = subjectData[s[0]]
+      <tr>
+        <td>English</td>
+        <td><input id="engMin" type="number" min="0" max="80" /></td>
+        <td><input id="engMax" type="number" min="0" max="80" /></td>
+        <td><input id="engRank" type="number" min="1" max="10" /></td>
+        <td id="engLikely">-</td>
+        <td id="engMild">-</td>
+        <td id="engExtreme">-</td>
+      </tr>
 
-    let mostLikely = percentile(arr,0.5)
-    let mildLow = percentile(arr,0.25)
-    let mildHigh = percentile(arr,0.75)
+      <tr>
+        <td>Science</td>
+        <td><input id="sciMin" type="number" min="0" max="80" /></td>
+        <td><input id="sciMax" type="number" min="0" max="80" /></td>
+        <td><input id="sciRank" type="number" min="1" max="10" /></td>
+        <td id="sciLikely">-</td>
+        <td id="sciMild">-</td>
+        <td id="sciExtreme">-</td>
+      </tr>
 
-    let min = Math.min(...arr)
-    let max = Math.max(...arr)
+      <tr>
+        <td>Social Science</td>
+        <td><input id="sstMin" type="number" min="0" max="80" /></td>
+        <td><input id="sstMax" type="number" min="0" max="80" /></td>
+        <td><input id="sstRank" type="number" min="1" max="10" /></td>
+        <td id="sstLikely">-</td>
+        <td id="sstMild">-</td>
+        <td id="sstExtreme">-</td>
+      </tr>
 
-    document.getElementById(s[0]+"Likely").innerHTML = mostLikely
-    document.getElementById(s[0]+"Mild").innerHTML = mildLow+" — "+mildHigh
-    document.getElementById(s[0]+"Extreme").innerHTML = min+" — "+max
-  })
+      <tr>
+        <td>2nd Language</td>
+        <td><input id="freMin" type="number" min="0" max="80" /></td>
+        <td><input id="freMax" type="number" min="0" max="80" /></td>
+        <td><input id="freRank" type="number" min="1" max="10" /></td>
+        <td id="freLikely">-</td>
+        <td id="freMild">-</td>
+        <td id="freExtreme">-</td>
+      </tr>
+    </table>
 
-  let minP = Math.min(...totalPercentages)
-  let maxP = Math.max(...totalPercentages)
+    <div class="button-row">
+      <button onclick="runSimulation()">Run Simulation</button>
+      <button class="secondary-btn" onclick="resetAll()">Reset All</button>
+    </div>
 
-  let mostP = percentile(totalPercentages,0.5)
-  let mildLowP = percentile(totalPercentages,0.25)
-  let mildHighP = percentile(totalPercentages,0.75)
+    <div class="error" id="errorBox"></div>
+    <div class="result" id="overall"></div>
+  </div>
 
-  document.getElementById("overall").innerHTML =
-    "<h3>Overall Percentage</h3>"+
-    "<b>Most Likely:</b> "+mostP.toFixed(2)+"%<br>"+
-    "<b>Mild Range:</b> "+mildLowP.toFixed(2)+"% — "+mildHighP.toFixed(2)+"%<br>"+
-    "<b>Extremes:</b> "+minP.toFixed(2)+"% — "+maxP.toFixed(2)+"%"
-}
+  <script>
+    const SUBJECTS = [
+      { code: "math", name: "Mathematics" },
+      { code: "eng", name: "English" },
+      { code: "sci", name: "Science" },
+      { code: "sst", name: "Social Science" },
+      { code: "fre", name: "2nd Language" }
+    ];
 
-window.onload = function(){
-  loadInputs()
-  setupAutosave()
-}
-</script>
+    function percentile(arr, p) {
+      const sorted = [...arr].sort((a, b) => a - b);
+      const index = Math.floor(p * (sorted.length - 1));
+      return sorted[index];
+    }
 
+    function clamp(num, min, max) {
+      return Math.max(min, Math.min(max, num));
+    }
+
+    function getInput(id) {
+      return document.getElementById(id);
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent = value;
+    }
+
+    function saveData() {
+      const data = {};
+
+      SUBJECTS.forEach(subject => {
+        data[subject.code + "Min"] = getInput(subject.code + "Min").value;
+        data[subject.code + "Max"] = getInput(subject.code + "Max").value;
+        data[subject.code + "Rank"] = getInput(subject.code + "Rank").value;
+      });
+
+      localStorage.setItem("boardMarksData", JSON.stringify(data));
+    }
+
+    function loadData() {
+      const saved = localStorage.getItem("boardMarksData");
+      if (!saved) return;
+
+      try {
+        const data = JSON.parse(saved);
+
+        SUBJECTS.forEach(subject => {
+          getInput(subject.code + "Min").value = data[subject.code + "Min"] || "";
+          getInput(subject.code + "Max").value = data[subject.code + "Max"] || "";
+          getInput(subject.code + "Rank").value = data[subject.code + "Rank"] || "";
+        });
+      } catch (error) {
+        console.error("Could not load saved data:", error);
+      }
+    }
+
+    function clearSavedData() {
+      localStorage.removeItem("boardMarksData");
+    }
+
+    function sanitizeNumberInput(input, minValue, maxValue) {
+      input.addEventListener("input", function () {
+        if (this.value === "") {
+          saveData();
+          return;
+        }
+
+        let value = this.value.replace(/[^0-9]/g, "");
+        if (value === "") {
+          this.value = "";
+          saveData();
+          return;
+        }
+
+        let numericValue = Number(value);
+        numericValue = clamp(numericValue, minValue, maxValue);
+        this.value = numericValue;
+        saveData();
+      });
+    }
+
+    function biasedRandomInt(min, max, rank) {
+      if (min === max) return min;
+
+      const range = max - min;
+
+      const favoredMeanMap = {
+        1: 0.95,
+        2: 0.88,
+        3: 0.81,
+        4: 0.74,
+        5: 0.67,
+        6: 0.60,
+        7: 0.53,
+        8: 0.46,
+        9: 0.39,
+        10: 0.32
+      };
+
+      const meanPosition = favoredMeanMap[rank] ?? 0.50;
+
+      const u1 = Math.random();
+      const u2 = Math.random();
+      const u3 = Math.random();
+      const average = (u1 + u2 + u3) / 3;
+
+      const shifted = average * 0.45 + meanPosition * 0.55;
+      const value = min + shifted * range;
+
+      return Math.round(clamp(value, min, max));
+    }
+
+    function getSubjectData() {
+      return SUBJECTS.map(subject => ({
+        code: subject.code,
+        name: subject.name,
+        min: Number(getInput(subject.code + "Min").value),
+        max: Number(getInput(subject.code + "Max").value),
+        rank: Number(getInput(subject.code + "Rank").value)
+      }));
+    }
+
+    function validateSubjects(subjects) {
+      const seenRanks = new Set();
+
+      for (const subject of subjects) {
+        const { name, min, max, rank } = subject;
+
+        if (Number.isNaN(min) || Number.isNaN(max) || Number.isNaN(rank)) {
+          return "Please fill all Min, Max, and Confidence Rank fields.";
+        }
+
+        if (min < 0 || min > 80 || max < 0 || max > 80) {
+          return `${name}: marks must be between 0 and 80.`;
+        }
+
+        if (min > max) {
+          return `${name}: Min cannot be greater than Max.`;
+        }
+
+        if (!Number.isInteger(rank) || rank < 1 || rank > 10) {
+          return `${name}: Confidence Rank must be an integer from 1 to 10.`;
+        }
+
+        if (seenRanks.has(rank)) {
+          return "Each subject must have a unique Confidence Rank.";
+        }
+
+        seenRanks.add(rank);
+      }
+
+      return "";
+    }
+
+    function clearSubjectOutputs() {
+      SUBJECTS.forEach(subject => {
+        setText(subject.code + "Likely", "-");
+        setText(subject.code + "Mild", "-");
+        setText(subject.code + "Extreme", "-");
+      });
+    }
+
+    function runSimulation() {
+      const errorBox = document.getElementById("errorBox");
+      const overall = document.getElementById("overall");
+
+      errorBox.textContent = "";
+      overall.innerHTML = "";
+
+      const subjects = getSubjectData();
+      const validationError = validateSubjects(subjects);
+
+      if (validationError) {
+        errorBox.textContent = validationError;
+        clearSubjectOutputs();
+        return;
+      }
+
+      const simulations = 10000;
+
+      const subjectResults = {
+        math: [],
+        eng: [],
+        sci: [],
+        sst: [],
+        fre: []
+      };
+
+      const totalPercentages = [];
+
+      for (let i = 0; i < simulations; i++) {
+        let total = 0;
+
+        subjects.forEach(subject => {
+          const simulatedTheoryMark = biasedRandomInt(subject.min, subject.max, subject.rank);
+          subjectResults[subject.code].push(simulatedTheoryMark);
+          total += simulatedTheoryMark + 20;
+        });
+
+        totalPercentages.push((total / 500) * 100);
+      }
+
+      subjects.forEach(subject => {
+        const arr = subjectResults[subject.code];
+
+        const mostLikely = percentile(arr, 0.5);
+        const mildLow = percentile(arr, 0.25);
+        const mildHigh = percentile(arr, 0.75);
+        const simulatedMin = Math.min(...arr);
+        const simulatedMax = Math.max(...arr);
+
+        setText(subject.code + "Likely", mostLikely);
+        setText(subject.code + "Mild", `${mildLow} — ${mildHigh}`);
+        setText(subject.code + "Extreme", `${simulatedMin} — ${simulatedMax}`);
+      });
+
+      const mostLikelyPercent = percentile(totalPercentages, 0.5);
+      const mildLowPercent = percentile(totalPercentages, 0.25);
+      const mildHighPercent = percentile(totalPercentages, 0.75);
+      const simulatedMinPercent = Math.min(...totalPercentages);
+      const simulatedMaxPercent = Math.max(...totalPercentages);
+
+      let rawMinTotal = 0;
+      let rawMaxTotal = 0;
+
+      subjects.forEach(subject => {
+        rawMinTotal += subject.min + 20;
+        rawMaxTotal += subject.max + 20;
+      });
+
+      const rawMinPercent = (rawMinTotal / 500) * 100;
+      const rawMaxPercent = (rawMaxTotal / 500) * 100;
+
+      overall.innerHTML =
+        "<h3>Overall Percentage</h3>" +
+        "<b>Most Likely:</b> " + mostLikelyPercent.toFixed(2) + "%<br>" +
+        "<b>Mild Range:</b> " + mildLowPercent.toFixed(2) + "% — " + mildHighPercent.toFixed(2) + "%<br>" +
+        "<b>Extremes (Simulated):</b> " + simulatedMinPercent.toFixed(2) + "% — " + simulatedMaxPercent.toFixed(2) + "%<br>" +
+        "<b>True Extremes (Raw):</b> " + rawMinPercent.toFixed(2) + "% — " + rawMaxPercent.toFixed(2) + "%";
+
+      saveData();
+    }
+
+    function resetAll() {
+      SUBJECTS.forEach(subject => {
+        getInput(subject.code + "Min").value = "";
+        getInput(subject.code + "Max").value = "";
+        getInput(subject.code + "Rank").value = "";
+
+        setText(subject.code + "Likely", "-");
+        setText(subject.code + "Mild", "-");
+        setText(subject.code + "Extreme", "-");
+      });
+
+      document.getElementById("errorBox").textContent = "";
+      document.getElementById("overall").innerHTML = "";
+      clearSavedData();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadData();
+
+      SUBJECTS.forEach(subject => {
+        sanitizeNumberInput(getInput(subject.code + "Min"), 0, 80);
+        sanitizeNumberInput(getInput(subject.code + "Max"), 0, 80);
+        sanitizeNumberInput(getInput(subject.code + "Rank"), 1, 10);
+      });
+
+      document.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", saveData);
+      });
+    });
+  </script>
 </body>
-
 </html>
