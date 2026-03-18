@@ -5,177 +5,346 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Board Marks</title>
 
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f4f6fb;
-      text-align: center;
-      padding: 40px;
       margin: 0;
     }
 
-    .container {
-      background: white;
-      width: 950px;
-      max-width: 95%;
-      margin: auto;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+    .app-wrap {
+      min-height: 100vh;
+      padding: 20px 12px;
     }
 
-    h1 {
-      margin-top: 0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
-    }
-
-    input {
-      width: 75px;
-      padding: 6px;
-      text-align: center;
-      font-size: 15px;
-      box-sizing: border-box;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 12px 20px;
-      font-size: 16px;
-      background: #4CAF50;
-      color: white;
+    .main-card {
       border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-right: 10px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
     }
 
-    button:hover {
-      background: #3e8e41;
+    .title {
+      font-weight: 700;
+      margin-bottom: 0.4rem;
     }
 
-    .secondary-btn {
-      background: #e74c3c;
-    }
-
-    .secondary-btn:hover {
-      background: #c0392b;
-    }
-
-    .result {
-      margin-top: 25px;
-      font-size: 16px;
-      line-height: 1.8;
+    .subtitle,
+    .note {
+      color: #6c757d;
     }
 
     .note {
-      margin-top: 10px;
-      color: #555;
-      font-size: 14px;
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .table th,
+    .table td {
+      vertical-align: middle;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .table input {
+      min-width: 74px;
+      text-align: center;
+    }
+
+    .subject-card {
+      border: 1px solid #e9ecef;
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .subject-card h5 {
+      margin-bottom: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .output-box {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .result-box {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 14px;
+      padding: 16px;
     }
 
     .error {
-      color: #c0392b;
-      margin-top: 15px;
-      font-weight: bold;
       min-height: 24px;
+      font-weight: 600;
     }
 
-    .button-row {
-      margin-top: 15px;
+    @media (max-width: 575.98px) {
+      .app-wrap {
+        padding: 14px 8px;
+      }
+
+      .card-body {
+        padding: 16px 12px;
+      }
+
+      .btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Percentage Calculator</h1>
-    <p>Enter expected theory marks (out of 80). Internal 20 marks will automatically be added.</p>
-    <p class="note">
-      Confidence Rank: <b>1 = strongest / most favorable</b>, <b>10 = weakest / least favorable</b>
-    </p>
-    <p class="note">
-      Use <b>5 unique ranks</b> between 1 and 10.
-    </p>
+  <div class="app-wrap">
+    <div class="container">
+      <div class="card main-card">
+        <div class="card-body p-3 p-md-4 p-lg-5">
+          <div class="text-center mb-4">
+            <h1 class="title h2 h-md-1">Percentage Calculator</h1>
+            <p class="subtitle mb-2">
+              Enter expected theory marks (out of 80). Internal 20 marks will automatically be added.
+            </p>
+            <p class="note mb-1">
+              Confidence Rank: <strong>1 = strongest / most favorable</strong>,
+              <strong>10 = weakest / least favorable</strong>
+            </p>
+            <p class="note mb-0">
+              Use <strong>5 unique ranks</strong> between 1 and 10.
+            </p>
+          </div>
 
-    <table>
-      <tr>
-        <th>Subject</th>
-        <th>Min</th>
-        <th>Max</th>
-        <th>Confidence Rank</th>
-        <th>Most Likely</th>
-        <th>Mild Range</th>
-        <th>Simulated Extremes</th>
-      </tr>
+          <!-- Desktop / Tablet Table -->
+          <div class="d-none d-md-block">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Subject</th>
+                    <th>Min</th>
+                    <th>Max</th>
+                    <th>Confidence Rank</th>
+                    <th>Most Likely</th>
+                    <th>Mild Range</th>
+                    <th>Simulated Extremes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Mathematics</td>
+                    <td><input id="mathMin" data-sync="mathMin" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="mathMax" data-sync="mathMax" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="mathRank" data-sync="mathRank" class="form-control form-control-sm" type="number" min="1" max="10" /></td>
+                    <td id="mathLikely">-</td>
+                    <td id="mathMild">-</td>
+                    <td id="mathExtreme">-</td>
+                  </tr>
 
-      <tr>
-        <td>Mathematics</td>
-        <td><input id="mathMin" type="number" min="0" max="80" /></td>
-        <td><input id="mathMax" type="number" min="0" max="80" /></td>
-        <td><input id="mathRank" type="number" min="1" max="10" /></td>
-        <td id="mathLikely">-</td>
-        <td id="mathMild">-</td>
-        <td id="mathExtreme">-</td>
-      </tr>
+                  <tr>
+                    <td>English</td>
+                    <td><input id="engMin" data-sync="engMin" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="engMax" data-sync="engMax" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="engRank" data-sync="engRank" class="form-control form-control-sm" type="number" min="1" max="10" /></td>
+                    <td id="engLikely">-</td>
+                    <td id="engMild">-</td>
+                    <td id="engExtreme">-</td>
+                  </tr>
 
-      <tr>
-        <td>English</td>
-        <td><input id="engMin" type="number" min="0" max="80" /></td>
-        <td><input id="engMax" type="number" min="0" max="80" /></td>
-        <td><input id="engRank" type="number" min="1" max="10" /></td>
-        <td id="engLikely">-</td>
-        <td id="engMild">-</td>
-        <td id="engExtreme">-</td>
-      </tr>
+                  <tr>
+                    <td>Science</td>
+                    <td><input id="sciMin" data-sync="sciMin" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="sciMax" data-sync="sciMax" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="sciRank" data-sync="sciRank" class="form-control form-control-sm" type="number" min="1" max="10" /></td>
+                    <td id="sciLikely">-</td>
+                    <td id="sciMild">-</td>
+                    <td id="sciExtreme">-</td>
+                  </tr>
 
-      <tr>
-        <td>Science</td>
-        <td><input id="sciMin" type="number" min="0" max="80" /></td>
-        <td><input id="sciMax" type="number" min="0" max="80" /></td>
-        <td><input id="sciRank" type="number" min="1" max="10" /></td>
-        <td id="sciLikely">-</td>
-        <td id="sciMild">-</td>
-        <td id="sciExtreme">-</td>
-      </tr>
+                  <tr>
+                    <td>Social Science</td>
+                    <td><input id="sstMin" data-sync="sstMin" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="sstMax" data-sync="sstMax" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="sstRank" data-sync="sstRank" class="form-control form-control-sm" type="number" min="1" max="10" /></td>
+                    <td id="sstLikely">-</td>
+                    <td id="sstMild">-</td>
+                    <td id="sstExtreme">-</td>
+                  </tr>
 
-      <tr>
-        <td>Social Science</td>
-        <td><input id="sstMin" type="number" min="0" max="80" /></td>
-        <td><input id="sstMax" type="number" min="0" max="80" /></td>
-        <td><input id="sstRank" type="number" min="1" max="10" /></td>
-        <td id="sstLikely">-</td>
-        <td id="sstMild">-</td>
-        <td id="sstExtreme">-</td>
-      </tr>
+                  <tr>
+                    <td>2nd Language</td>
+                    <td><input id="freMin" data-sync="freMin" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="freMax" data-sync="freMax" class="form-control form-control-sm" type="number" min="0" max="80" /></td>
+                    <td><input id="freRank" data-sync="freRank" class="form-control form-control-sm" type="number" min="1" max="10" /></td>
+                    <td id="freLikely">-</td>
+                    <td id="freMild">-</td>
+                    <td id="freExtreme">-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-      <tr>
-        <td>2nd Language</td>
-        <td><input id="freMin" type="number" min="0" max="80" /></td>
-        <td><input id="freMax" type="number" min="0" max="80" /></td>
-        <td><input id="freRank" type="number" min="1" max="10" /></td>
-        <td id="freLikely">-</td>
-        <td id="freMild">-</td>
-        <td id="freExtreme">-</td>
-      </tr>
-    </table>
+          <!-- Mobile Cards -->
+          <div class="d-md-none">
+            <div class="row g-3">
+              <div class="col-12">
+                <div class="subject-card">
+                  <h5>Mathematics</h5>
+                  <div class="row g-2">
+                    <div class="col-4">
+                      <label class="form-label small">Min</label>
+                      <input id="mathMin_mobile" data-sync="mathMin" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Max</label>
+                      <input id="mathMax_mobile" data-sync="mathMax" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Rank</label>
+                      <input id="mathRank_mobile" data-sync="mathRank" class="form-control" type="number" min="1" max="10" />
+                    </div>
+                    <div class="col-12">
+                      <div class="output-box mt-2">
+                        <div><strong>Most Likely:</strong> <span id="mathLikely_mobile">-</span></div>
+                        <div><strong>Mild Range:</strong> <span id="mathMild_mobile">-</span></div>
+                        <div><strong>Simulated Extremes:</strong> <span id="mathExtreme_mobile">-</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-    <div class="button-row">
-      <button onclick="runSimulation()">Run Simulation</button>
-      <button class="secondary-btn" onclick="resetAll()">Reset All</button>
+              <div class="col-12">
+                <div class="subject-card">
+                  <h5>English</h5>
+                  <div class="row g-2">
+                    <div class="col-4">
+                      <label class="form-label small">Min</label>
+                      <input id="engMin_mobile" data-sync="engMin" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Max</label>
+                      <input id="engMax_mobile" data-sync="engMax" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Rank</label>
+                      <input id="engRank_mobile" data-sync="engRank" class="form-control" type="number" min="1" max="10" />
+                    </div>
+                    <div class="col-12">
+                      <div class="output-box mt-2">
+                        <div><strong>Most Likely:</strong> <span id="engLikely_mobile">-</span></div>
+                        <div><strong>Mild Range:</strong> <span id="engMild_mobile">-</span></div>
+                        <div><strong>Simulated Extremes:</strong> <span id="engExtreme_mobile">-</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="subject-card">
+                  <h5>Science</h5>
+                  <div class="row g-2">
+                    <div class="col-4">
+                      <label class="form-label small">Min</label>
+                      <input id="sciMin_mobile" data-sync="sciMin" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Max</label>
+                      <input id="sciMax_mobile" data-sync="sciMax" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Rank</label>
+                      <input id="sciRank_mobile" data-sync="sciRank" class="form-control" type="number" min="1" max="10" />
+                    </div>
+                    <div class="col-12">
+                      <div class="output-box mt-2">
+                        <div><strong>Most Likely:</strong> <span id="sciLikely_mobile">-</span></div>
+                        <div><strong>Mild Range:</strong> <span id="sciMild_mobile">-</span></div>
+                        <div><strong>Simulated Extremes:</strong> <span id="sciExtreme_mobile">-</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="subject-card">
+                  <h5>Social Science</h5>
+                  <div class="row g-2">
+                    <div class="col-4">
+                      <label class="form-label small">Min</label>
+                      <input id="sstMin_mobile" data-sync="sstMin" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Max</label>
+                      <input id="sstMax_mobile" data-sync="sstMax" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Rank</label>
+                      <input id="sstRank_mobile" data-sync="sstRank" class="form-control" type="number" min="1" max="10" />
+                    </div>
+                    <div class="col-12">
+                      <div class="output-box mt-2">
+                        <div><strong>Most Likely:</strong> <span id="sstLikely_mobile">-</span></div>
+                        <div><strong>Mild Range:</strong> <span id="sstMild_mobile">-</span></div>
+                        <div><strong>Simulated Extremes:</strong> <span id="sstExtreme_mobile">-</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="subject-card">
+                  <h5>2nd Language</h5>
+                  <div class="row g-2">
+                    <div class="col-4">
+                      <label class="form-label small">Min</label>
+                      <input id="freMin_mobile" data-sync="freMin" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Max</label>
+                      <input id="freMax_mobile" data-sync="freMax" class="form-control" type="number" min="0" max="80" />
+                    </div>
+                    <div class="col-4">
+                      <label class="form-label small">Rank</label>
+                      <input id="freRank_mobile" data-sync="freRank" class="form-control" type="number" min="1" max="10" />
+                    </div>
+                    <div class="col-12">
+                      <div class="output-box mt-2">
+                        <div><strong>Most Likely:</strong> <span id="freLikely_mobile">-</span></div>
+                        <div><strong>Mild Range:</strong> <span id="freMild_mobile">-</span></div>
+                        <div><strong>Simulated Extremes:</strong> <span id="freExtreme_mobile">-</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-grid d-sm-flex justify-content-center gap-2 mt-4">
+            <button class="btn btn-success px-4" onclick="runSimulation()">Run Simulation</button>
+            <button class="btn btn-danger px-4" onclick="resetAll()">Reset All</button>
+          </div>
+
+          <div class="error text-danger text-center mt-3" id="errorBox"></div>
+
+          <div class="result-box mt-4" id="overall"></div>
+        </div>
+      </div>
     </div>
-
-    <div class="error" id="errorBox"></div>
-    <div class="result" id="overall"></div>
   </div>
 
   <script>
@@ -202,16 +371,35 @@
     }
 
     function setText(id, value) {
-      document.getElementById(id).textContent = value;
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+
+      const mobileEl = document.getElementById(id + "_mobile");
+      if (mobileEl) mobileEl.textContent = value;
+    }
+
+    function getSyncedInputs(key) {
+      return document.querySelectorAll(`[data-sync="${key}"]`);
+    }
+
+    function setSyncedValue(key, value, source = null) {
+      getSyncedInputs(key).forEach(input => {
+        if (input !== source) input.value = value;
+      });
+    }
+
+    function getPrimaryValue(key) {
+      const inputs = getSyncedInputs(key);
+      return inputs.length ? inputs[0].value : "";
     }
 
     function saveData() {
       const data = {};
 
       SUBJECTS.forEach(subject => {
-        data[subject.code + "Min"] = getInput(subject.code + "Min").value;
-        data[subject.code + "Max"] = getInput(subject.code + "Max").value;
-        data[subject.code + "Rank"] = getInput(subject.code + "Rank").value;
+        data[subject.code + "Min"] = getPrimaryValue(subject.code + "Min");
+        data[subject.code + "Max"] = getPrimaryValue(subject.code + "Max");
+        data[subject.code + "Rank"] = getPrimaryValue(subject.code + "Rank");
       });
 
       localStorage.setItem("boardMarksData", JSON.stringify(data));
@@ -225,9 +413,9 @@
         const data = JSON.parse(saved);
 
         SUBJECTS.forEach(subject => {
-          getInput(subject.code + "Min").value = data[subject.code + "Min"] || "";
-          getInput(subject.code + "Max").value = data[subject.code + "Max"] || "";
-          getInput(subject.code + "Rank").value = data[subject.code + "Rank"] || "";
+          setSyncedValue(subject.code + "Min", data[subject.code + "Min"] || "");
+          setSyncedValue(subject.code + "Max", data[subject.code + "Max"] || "");
+          setSyncedValue(subject.code + "Rank", data[subject.code + "Rank"] || "");
         });
       } catch (error) {
         console.error("Could not load saved data:", error);
@@ -238,9 +426,10 @@
       localStorage.removeItem("boardMarksData");
     }
 
-    function sanitizeNumberInput(input, minValue, maxValue) {
+    function sanitizeNumberInput(input, minValue, maxValue, syncKey) {
       input.addEventListener("input", function () {
         if (this.value === "") {
+          setSyncedValue(syncKey, "", this);
           saveData();
           return;
         }
@@ -248,6 +437,7 @@
         let value = this.value.replace(/[^0-9]/g, "");
         if (value === "") {
           this.value = "";
+          setSyncedValue(syncKey, "", this);
           saveData();
           return;
         }
@@ -255,6 +445,7 @@
         let numericValue = Number(value);
         numericValue = clamp(numericValue, minValue, maxValue);
         this.value = numericValue;
+        setSyncedValue(syncKey, numericValue, this);
         saveData();
       });
     }
@@ -294,9 +485,9 @@
       return SUBJECTS.map(subject => ({
         code: subject.code,
         name: subject.name,
-        min: Number(getInput(subject.code + "Min").value),
-        max: Number(getInput(subject.code + "Max").value),
-        rank: Number(getInput(subject.code + "Rank").value)
+        min: Number(getPrimaryValue(subject.code + "Min")),
+        max: Number(getPrimaryValue(subject.code + "Max")),
+        rank: Number(getPrimaryValue(subject.code + "Rank"))
       }));
     }
 
@@ -412,20 +603,42 @@
       const rawMaxPercent = (rawMaxTotal / 500) * 100;
 
       overall.innerHTML =
-        "<h3>Overall Percentage</h3>" +
-        "<b>Most Likely:</b> " + mostLikelyPercent.toFixed(2) + "%<br>" +
-        "<b>Mild Range:</b> " + mildLowPercent.toFixed(2) + "% — " + mildHighPercent.toFixed(2) + "%<br>" +
-        "<b>Extremes (Simulated):</b> " + simulatedMinPercent.toFixed(2) + "% — " + simulatedMaxPercent.toFixed(2) + "%<br>" +
-        "<b>True Extremes (Raw):</b> " + rawMinPercent.toFixed(2) + "% — " + rawMaxPercent.toFixed(2) + "%";
+        `<h3 class="h5 mb-3 text-center">Overall Percentage</h3>
+         <div class="row g-3 text-center">
+           <div class="col-12 col-md-6">
+             <div class="p-3 border rounded bg-white h-100">
+               <div class="fw-semibold">Most Likely</div>
+               <div>${mostLikelyPercent.toFixed(2)}%</div>
+             </div>
+           </div>
+           <div class="col-12 col-md-6">
+             <div class="p-3 border rounded bg-white h-100">
+               <div class="fw-semibold">Mild Range</div>
+               <div>${mildLowPercent.toFixed(2)}% — ${mildHighPercent.toFixed(2)}%</div>
+             </div>
+           </div>
+           <div class="col-12 col-md-6">
+             <div class="p-3 border rounded bg-white h-100">
+               <div class="fw-semibold">Extremes (Simulated)</div>
+               <div>${simulatedMinPercent.toFixed(2)}% — ${simulatedMaxPercent.toFixed(2)}%</div>
+             </div>
+           </div>
+           <div class="col-12 col-md-6">
+             <div class="p-3 border rounded bg-white h-100">
+               <div class="fw-semibold">True Extremes (Raw)</div>
+               <div>${rawMinPercent.toFixed(2)}% — ${rawMaxPercent.toFixed(2)}%</div>
+             </div>
+           </div>
+         </div>`;
 
       saveData();
     }
 
     function resetAll() {
       SUBJECTS.forEach(subject => {
-        getInput(subject.code + "Min").value = "";
-        getInput(subject.code + "Max").value = "";
-        getInput(subject.code + "Rank").value = "";
+        setSyncedValue(subject.code + "Min", "");
+        setSyncedValue(subject.code + "Max", "");
+        setSyncedValue(subject.code + "Rank", "");
 
         setText(subject.code + "Likely", "-");
         setText(subject.code + "Mild", "-");
@@ -441,9 +654,15 @@
       loadData();
 
       SUBJECTS.forEach(subject => {
-        sanitizeNumberInput(getInput(subject.code + "Min"), 0, 80);
-        sanitizeNumberInput(getInput(subject.code + "Max"), 0, 80);
-        sanitizeNumberInput(getInput(subject.code + "Rank"), 1, 10);
+        getSyncedInputs(subject.code + "Min").forEach(input =>
+          sanitizeNumberInput(input, 0, 80, subject.code + "Min")
+        );
+        getSyncedInputs(subject.code + "Max").forEach(input =>
+          sanitizeNumberInput(input, 0, 80, subject.code + "Max")
+        );
+        getSyncedInputs(subject.code + "Rank").forEach(input =>
+          sanitizeNumberInput(input, 1, 10, subject.code + "Rank")
+        );
       });
 
       document.querySelectorAll("input").forEach(input => {
