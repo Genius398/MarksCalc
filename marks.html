@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Board Marks</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6fb;
+text-align:center;
+padding:40px;
+}
+
+.container{
+background:white;
+width:760px;
+margin:auto;
+padding:25px;
+border-radius:10px;
+box-shadow:0 0 12px rgba(0,0,0,0.15);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+input{
+width:60px;
+padding:6px;
+text-align:center;
+}
+
+button{
+margin-top:20px;
+padding:12px 20px;
+font-size:16px;
+background:#4CAF50;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#3e8e41;
+}
+
+.result{
+margin-top:25px;
+font-size:16px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Board Percentage</h1>
+<p>Enter expected theory marks (out of 80). Internal 20 marks will automatically be added.</p>
+
+<table>
+
+<tr>
+<th>Subject</th>
+<th>Min</th>
+<th>Max</th>
+<th>Most Likely</th>
+<th>Mild Range</th>
+<th>Extremes</th>
+</tr>
+
+<tr>
+<td>Maths</td>
+<td><input id="mathMin"></td>
+<td><input id="mathMax"></td>
+<td id="mathLikely">-</td>
+<td id="mathMild">-</td>
+<td id="mathExtreme">-</td>
+</tr>
+
+<tr>
+<td>English</td>
+<td><input id="engMin"></td>
+<td><input id="engMax"></td>
+<td id="engLikely">-</td>
+<td id="engMild">-</td>
+<td id="engExtreme">-</td>
+</tr>
+
+<tr>
+<td>Science</td>
+<td><input id="sciMin"></td>
+<td><input id="sciMax"></td>
+<td id="sciLikely">-</td>
+<td id="sciMild">-</td>
+<td id="sciExtreme">-</td>
+</tr>
+
+<tr>
+<td>Social Science</td>
+<td><input id="sstMin"></td>
+<td><input id="sstMax"></td>
+<td id="sstLikely">-</td>
+<td id="sstMild">-</td>
+<td id="sstExtreme">-</td>
+</tr>
+
+<tr>
+<td>French</td>
+<td><input id="freMin"></td>
+<td><input id="freMax"></td>
+<td id="freLikely">-</td>
+<td id="freMild">-</td>
+<td id="freExtreme">-</td>
+</tr>
+
+</table>
+
+<button onclick="runSimulation()">Run Simulation</button>
+
+<div class="result" id="overall"></div>
+
+</div>
+
+<script>
+
+function randInt(min,max){
+return Math.floor(Math.random()*(max-min+1))+min
+}
+
+function percentile(arr,p){
+let sorted=[...arr].sort((a,b)=>a-b)
+return sorted[Math.floor(p*sorted.length)]
+}
+
+function runSimulation(){
+
+let simulations=10000
+
+let subjects=[
+["math",Number(mathMin.value),Number(mathMax.value)],
+["eng",Number(engMin.value),Number(engMax.value)],
+["sci",Number(sciMin.value),Number(sciMax.value)],
+["sst",Number(sstMin.value),Number(sstMax.value)],
+["fre",Number(freMin.value),Number(freMax.value)]
+]
+
+let subjectData={
+math:[],
+eng:[],
+sci:[],
+sst:[],
+fre:[]
+}
+
+let totalPercentages=[]
+
+for(let i=0;i<simulations;i++){
+
+let total=0
+
+subjects.forEach(s=>{
+
+let mark=randInt(s[1],s[2])
+
+subjectData[s[0]].push(mark)
+
+total+=mark+20
+
+})
+
+let percent=(total/500)*100
+
+totalPercentages.push(percent)
+
+}
+
+subjects.forEach(s=>{
+
+let arr=subjectData[s[0]]
+
+let mostLikely=percentile(arr,0.5)
+let mildLow=percentile(arr,0.25)
+let mildHigh=percentile(arr,0.75)
+
+let min=Math.min(...arr)
+let max=Math.max(...arr)
+
+document.getElementById(s[0]+"Likely").innerHTML=mostLikely
+document.getElementById(s[0]+"Mild").innerHTML=mildLow+" — "+mildHigh
+document.getElementById(s[0]+"Extreme").innerHTML=min+" — "+max
+
+})
+
+let minP=Math.min(...totalPercentages)
+let maxP=Math.max(...totalPercentages)
+
+let mostP=percentile(totalPercentages,0.5)
+let mildLowP=percentile(totalPercentages,0.25)
+let mildHighP=percentile(totalPercentages,0.75)
+
+document.getElementById("overall").innerHTML=
+
+"<h3>Overall Percentage</h3>"+
+"<b>Most Likely:</b> "+mostP.toFixed(2)+"%<br>"+
+"<b>Mild Range:</b> "+mildLowP.toFixed(2)+"% — "+mildHighP.toFixed(2)+"%<br>"+
+"<b>Extremes:</b> "+minP.toFixed(2)+"% — "+maxP.toFixed(2)+"%"
+
+}
+
+</script>
+
+</body>
+
+</html>
